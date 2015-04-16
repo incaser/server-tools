@@ -258,11 +258,12 @@ class auditlog_rule(models.Model):
         @api.multi
         def write(self, vals, **kwargs):
             rule_model = self.env['auditlog.rule']
+            cols = list(vals) # list(self._columns)
             old_values = dict(
-                (d['id'], d) for d in self.sudo().read(list(self._columns)))
+                (d['id'], d) for d in self.sudo().read(cols))
             result = write.origin(self, vals, **kwargs)
             new_values = dict(
-                (d['id'], d) for d in self.sudo().read(list(self._columns)))
+                (d['id'], d) for d in self.sudo().read(cols))
             rule_model.sudo().create_logs(
                 self.env.uid, self._name, self.ids,
                 'write', old_values, new_values)
@@ -303,13 +304,14 @@ class auditlog_rule(models.Model):
                 'user_id': uid,
             }
             vals.update(additional_log_values or {})
-            log = log_model.create(vals)
             diff = DictDiffer(
                 new_values.get(res_id, EMPTY_DICT),
                 old_values.get(res_id, EMPTY_DICT))
-            self._create_log_line_on_write(
-                log, diff.changed(), old_values, new_values)
-            self._create_log_line_on_create(log, diff.added(), new_values)
+            if len(diff.changed()):
+                log = log_model.create(vals)
+                self._create_log_line_on_write(
+                    log, diff.changed(), old_values, new_values)
+                self._create_log_line_on_create(log, diff.added(), new_values)
 
     def _get_field(self, model, field_name):
         cache = self.pool._auditlog_field_cache
