@@ -322,8 +322,11 @@ class auditlog_rule(models.Model):
             field_model = self.env['ir.model.fields']
             field = field_model.search(
                 [('model_id', '=', model.id), ('name', '=', field_name)])
-            field_data = field.read(load='_classic_write')[0]
-            cache[model.model][field_name] = field_data
+            if field:
+                field_data = field.read(load='_classic_write')[0]
+                cache[model.model][field_name] = field_data
+            else:
+                cache[model.model][field_name] = False
         return cache[model.model][field_name]
 
     def _create_log_line_on_write(
@@ -334,9 +337,10 @@ class auditlog_rule(models.Model):
             if field_name in FIELDS_BLACKLIST:
                 continue
             field = self._get_field(log.model_id, field_name)
-            log_vals = self._prepare_log_line_vals_on_write(
-                log, field, old_values, new_values)
-            log_line_model.create(log_vals)
+            if field:
+                log_vals = self._prepare_log_line_vals_on_write(
+                    log, field, old_values, new_values)
+                log_line_model.create(log_vals)
 
     def _prepare_log_line_vals_on_write(
             self, log, field, old_values, new_values):
