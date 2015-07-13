@@ -2,8 +2,8 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    This module copyright (C) 2013 Therp BV (<http://therp.nl>)
-#    All Rights Reserved
+#    This module copyright (C) 2015 Savoir-faire Linux
+#    (<http://www.savoirfairelinux.com>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,20 +20,6 @@
 #
 ##############################################################################
 
-{
-    'name': 'Email gateway - folders',
-    'summary': 'Attach mails in an IMAP folder to existing objects',
-    'version': '1.0',
-    'author': "Therp BV,Odoo Community Association (OCA)",
-    'website': 'http://www.therp.nl',
-    'license': 'AGPL-3',
-    "category": "Tools",
-    "depends": ['fetchmail'],
-    'data': [
-        'view/fetchmail_server.xml',
-        'wizard/attach_mail_manually.xml',
-        'security/ir.model.access.csv',
-    ],
-    'installable': True,
-    'auto_install': False,
-}
+""" QWeb usertime addon """
+
+from . import qweb
