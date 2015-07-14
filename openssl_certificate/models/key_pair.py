@@ -24,12 +24,19 @@
 #
 ##############################################################################
 
-from OpenSSL import crypto
+from OpenSSL import crypto, SSL
+
+# from OpenSSL import lib as cryptolib
+
+import cStringIO
 
 from openerp import models, fields, api
 
 TYPE_RSA = crypto.TYPE_RSA
 TYPE_DSA = crypto.TYPE_DSA
+FILETYPE_PEM = SSL.FILETYPE_PEM
+# FILETYPE_TEXT = SSL.FILETYPE_TEXT
+FILETYPE_ASN1 = SSL.FILETYPE_ASN1
 
 
 class KeyPair(models.Model):
@@ -71,6 +78,12 @@ class KeyPair(models.Model):
 
     @api.multi
     def generate_key(self):
-        key = self.create_key_pair(self.type, self.size)
-        self.public_key = key[:self.size]
-        self.private_key = key[self.size:]
+        pkey = self.create_key_pair(self.type, self.size)
+        string_key = cStringIO.StringIO()
+        string_key.write(crypto.dump_privatekey(FILETYPE_PEM, pkey))
+
+        self.private_key = string_key.getvalue()
+        string_key.close()
+        # string_key = cStringIO.StringIO()
+        # string_key.write(pkey)
+        # self.public_key = string_key.getvalue()
