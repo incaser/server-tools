@@ -22,8 +22,10 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-##############################################################################
+###############################################################################
 
+import generate_pairkey
+import generate_certificate
+import generate_certificate_request
 
-from . import key_pair
-from . import certificate
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
