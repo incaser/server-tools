@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--
+          =========================
+          OpenSSL Certificates menu
+          =========================
+        -->
+        <menuitem id="openssl_certificate_menu" name="OpenSSL Certificates" parent="base.menu_administration"/>
+            <menuitem id="menu_action_key_pair" action="action_openssl_key_pair"  parent="openssl_certificate_menu"/>
+    </data>
+</openerp>		

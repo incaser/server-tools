@@ -4,8 +4,10 @@
 #
 #    OpenERP, Open Source Management Solution
 #    This module copyright :
-#        (c) 2015 Antiun Ingenieria, SL (Madrid, Spain, http://www.antiun.com)
-#                 Antonio Espinosa <antonioea@antiun.com>
+#        (c) 2015 Incaser Informatica, SL (
+#                   Castellon, Spain, http://www.incaser.es)
+#                 Carlos Dauden <carlos@incaser.es>
+#                 Sergio Teruel <sergio@incaser.es>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,27 +24,13 @@
 #
 ##############################################################################
 
-from openerp.tests.common import TransactionCase
+from M2Crypto import RSA, BIO
+
+from openerp import models, fields, api
 
 
-# One test case per method
-class TestResPartner(TransactionCase):
-    # Use case : Prepare some data for current test case
-    # def setUp(self):
-    #     super(TestResPartner, self).setUp()
-    #     # More initializations here ...
+class Certificate(models.Model):
+    _name = 'certificate'
 
-    # Use case : Clean data after current test case
-    # def tearDown(self):
-    #     # Clean data here ...
-    #     super(TestResPartner, self).tearDown()
-
-    def test_some_action(self):
-        record = self.env['res.partner'].create({'name': 'Firstname Lastname'})
-        self.assertTrue(record)
-
-        # Use case: Test some action
-        # record.some_action()
-        # self.assertEqual(
-        #     record.field,
-        #     expected_field_value)
+    type = fields.Selection([('CA', 'Certification Authority'),
+                             ('entity', 'Entity')])

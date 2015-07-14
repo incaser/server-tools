@@ -4,8 +4,10 @@
 #
 #    OpenERP, Open Source Management Solution
 #    This module copyright :
-#        (c) 2015 Antiun Ingenieria, SL (Madrid, Spain, http://www.antiun.com)
-#                 Antonio Espinosa <antonioea@antiun.com>
+#        (c) 2015 Incaser Informatica, SL (
+#                       Castellon, Spain, http://www.incaser.es)
+#                 Carlos Dauden <carlos@incaser.es>
+#                 Sergio Teruel <sergio@incaser.es>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -22,4 +24,5 @@
 #
 ##############################################################################
 
-from . import test_res_partner
+
+from . import models

@@ -4,8 +4,10 @@
 #
 #    OpenERP, Open Source Management Solution
 #    This module copyright :
-#        (c) 2015 Antiun Ingenieria, SL (Madrid, Spain, http://www.antiun.com)
-#                 Antonio Espinosa <antonioea@antiun.com>
+#        (c) 2015 Incaser Informatica, SL (
+#                   Castellon, Spain, http://www.incaser.es)
+#                 Carlos Dauden <carlos@incaser.es>
+#                 Sergio Teruel <sergio@incaser.es>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -21,5 +23,31 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-
-from . import res_partner
+{
+    'name': "SSL Certificate Genarator",
+    'category': 'Tools',
+    'version': '1.0',
+    'depends': [
+        'base',
+    ],
+    'external_dependencies': {
+        'python': ['OpenSSL'],
+    },
+    'data': [
+        'views/key_pair_view.xml',
+        'views/menu_view.xml'
+    ],
+    'qweb': [
+    ],
+    'js': [
+    ],
+    'author': 'Incaser Informatica S.L., '
+              'Odoo Community Association (OCA)',
+    'website': 'http://www.incaser.es',
+    'license': 'AGPL-3',
+    'demo': [],
+    'test': [],
+    'installable': True,
+    # 'auto_install':False,
+    # 'application':False,
+}
