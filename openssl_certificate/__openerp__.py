@@ -35,6 +35,8 @@
     },
     'data': [
         'views/key_pair_view.xml',
+        'views/certificate_view.xml',
+        'wizard/generate_certificate.xml',
         'views/menu_view.xml'
     ],
     'qweb': [

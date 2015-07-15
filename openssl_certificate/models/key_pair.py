@@ -26,8 +26,6 @@
 
 from OpenSSL import crypto, SSL
 
-# from OpenSSL import lib as cryptolib
-
 import cStringIO
 
 from openerp import models, fields, api
@@ -81,9 +79,11 @@ class KeyPair(models.Model):
         pkey = self.create_key_pair(self.type, self.size)
         string_key = cStringIO.StringIO()
         string_key.write(crypto.dump_privatekey(FILETYPE_PEM, pkey))
-
         self.private_key = string_key.getvalue()
         string_key.close()
+        #TODO Extact public key from key pair
         # string_key = cStringIO.StringIO()
-        # string_key.write(pkey)
+        # string_key.write(cert.get_pubkey())
         # self.public_key = string_key.getvalue()
+        # string_key.close()
+        return pkey

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+	<record id="view_openssl_certificate_tree" model="ir.ui.view">
+		<field name="name">openssl.certificate.tree</field>
+		<field name="model">openssl.certificate</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+			<tree string="Certificates">
+				<field name="partner_id"/>
+				<field name="name"/>
+				<field name="status"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_openssl_certificate_form" model="ir.ui.view">
+		<field name="name">openssl.certificate.form</field>
+		<field name="model">openssl.certificate</field>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<form string="Certificate">
+			<header>
+				<button name="%(action_openssl_generate_certificate_wizard)s" type="action" string="Generate certifate"/>
+				<button name="create_ca_cert" type="object" string="Crear CA"/>
+				<field name="state" widget="statusbar" statusbar_colors='{}'/>
+			</header>
+			<sheet>
+				<field name="name"/>
+				<group>
+					<field name="partner_id"/>
+					<field name="keypair_id"/>
+					<field name="status"/>
+				</group>
+				<separator string="Certificate"/>
+				<field name="crt"/>
+			</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="action_openssl_certificate" model="ir.actions.act_window">
+            <field name="name">Certificates</field>
+            <field name="res_model">openssl.certificate</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_openssl_certificate_tree"/>
+	</record>
+
+    </data>
+</openerp>

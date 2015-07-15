@@ -26,12 +26,19 @@
 
 from OpenSSL import crypto, SSL
 import os, hashlib
+import cStringIO
 
 from openerp import models, fields, api
 
 class Certificate(models.Model):
     _name = 'openssl.certificate'
+
+    def _get_status(self):
+        self.status = 'en pruebas'
+
     name = fields.Char(string='Name')
+    partner_id = fields.Many2one(
+        comodel_name='res.partner', string='Partner', readonly=True)
     csr = fields.Text('Request Certificate',
                        readonly=True,
                        states={'draft': [('readonly', False)]},
@@ -49,6 +56,8 @@ class Certificate(models.Model):
         ('confirmed', 'Confirmed'),
         ('cancel', 'Cancelled')
     ], 'State', readonly=True)
+    status = fields.Char(
+        compute='_get_status', string='Status',help='Certificate Status')
 
     def get_serial(self):
         #Serial Generation - Serial number must be unique for each certificate,
@@ -58,11 +67,13 @@ class Certificate(models.Model):
         return serial
 
     @api.multi
-    def createCertificate(self, partner):
+    def create_certificate(self, partner):
+        ca_crt =''
+        ca_key =''
         # The CA stuff is loaded from the same folder as this script
         ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, open(ca_crt).read())
         # The last parameter is the password for your CA key file
-        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, open(ca_key).read(), "owtf-d
+        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, open(ca_key).read(), "owtf-d")
 
         key = crypto.PKey()
         key.generate_key( crypto.TYPE_RSA, 2048)
@@ -82,11 +93,42 @@ class Certificate(models.Model):
         cert.sign(ca_key, "sha1")
 
         # The key and cert files are dumped and their paths are returned
-        key_path = os.path.join(os.path.dirname(__file__),"domains/"+domain.replace('.','_')+".key")
-        domain_key = open(key_path,"w")
-        domain_key.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key))
-
-        cert_path = os.path.join(os.path.dirname(__file__),"domains/"+domain.replace('.','_')+".crt")
-        domain_cert = open(cert_path,"w")
-        domain_cert.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
+        # key_path = os.path.join(os.path.dirname(__file__),"domains/"+domain.replace('.','_')+".key")
+        # domain_key = open(key_path,"w")
+        # domain_key.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key))
+        #
+        # cert_path = os.path.join(os.path.dirname(__file__),"domains/"+domain.replace('.','_')+".crt")
+        # domain_cert = open(cert_path,"w")
+        # domain_cert.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
         return cert
+
+    @api.multi
+    def create_ca_cert(self):
+        pkey_obj = self.env['openssl.key.pair']
+        vals = {'name': 'CA_Root_%s' % (self.name),
+                'type': crypto.TYPE_RSA,
+                'size': 4096
+                }
+        pkey_record = pkey_obj.create(vals)
+        pkey = pkey_record.generate_key()
+        self.keypair_id = pkey_record
+
+        ca = crypto.X509()
+        ca.set_version(3)
+        ca.set_serial_number(1)
+        ca.get_subject().CN = "ca.example.com"
+        ca.gmtime_adj_notBefore(0)
+        ca.gmtime_adj_notAfter(24 * 60 * 60)
+        ca.set_issuer(ca.get_subject())
+        ca.set_pubkey(pkey)
+        ca.add_extensions([
+          crypto.X509Extension("basicConstraints", True, "CA:TRUE, pathlen:0"),
+          crypto.X509Extension("keyUsage", True,"keyCertSign, cRLSign"),
+          crypto.X509Extension("subjectKeyIdentifier", False, "hash", subject=ca),
+          ])
+        ca.sign(pkey, "sha256")
+
+        string_key = cStringIO.StringIO()
+        string_key.write(crypto.dump_certificate(crypto.FILETYPE_PEM, ca))
+        self.crt = string_key.getvalue()
+        string_key.close()

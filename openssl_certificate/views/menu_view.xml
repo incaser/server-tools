@@ -8,5 +8,6 @@
         -->
         <menuitem id="openssl_certificate_menu" name="OpenSSL Certificates" parent="base.menu_administration"/>
             <menuitem id="menu_action_key_pair" action="action_openssl_key_pair"  parent="openssl_certificate_menu"/>
+            <menuitem id="menu_action_certificate_tree" action="action_openssl_certificate"  parent="openssl_certificate_menu"/>
     </data>
 </openerp>		

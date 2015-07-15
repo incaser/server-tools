@@ -41,7 +41,7 @@ class generate_certificate(models.TransientModel):
     date_end = fields.Date(
         string='Expiration date',
         default=(datetime.today() + timedelta(days=(365))).strftime('%Y-%m-%d'))
-    name_country = fields.Char(string='Country (C)', size=2)
+    name_c = fields.Char(string='Country (C)', size=2)
     name_sp = fields.Char(string='State or Province Name (ST/SP)', size=64)
     name_l = fields.Char(string='Locality Name (L)', size=64)
     name_o = fields.Char(string='Organization Name (O)', size=64)
@@ -52,11 +52,13 @@ class generate_certificate(models.TransientModel):
     name_email = fields.Char(string='E-mail Addres (EMail)', size=64)
     name_serialnumber = fields.Char(
         string='Serial Number (serialNumber)', size=64)
+    cert_type = fields.Selection([('entity', 'Entity'),
+                                  ('ca', 'Common Auhtority'),])
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         if self.partner_id:
-            self.name_country = self.partner_id.country_id.code
+            self.name_c = self.partner_id.country_id.code
             self.name_sp = self.partner_id.state_id.name
             self.name_l = self.partner_id.city
             self.name_o = self.partner_id.name
@@ -66,7 +68,7 @@ class generate_certificate(models.TransientModel):
     @api.multi
     def generate_certificate(self):
         active_ids = self._context['active_ids']
-        certificate_obj = self.pool.get('crypto.certificate')
+        certificate_obj = self.pool.get('openssl.certificate')
         r_ids = []
         for wizard in self.browse(cr, uid, ids):
             name = X509.X509_Name()
@@ -91,7 +93,7 @@ class generate_certificate(models.TransientModel):
         # res_id = r_ids[0]
         return {
             'name': _('Request Certificate'),
-            'res_model': 'crypto.certificate',
+            'res_model': 'openssl.certificate',
             'res_id': active_ids[0],
             'type': 'ir.actions.act_window',
             'view_id': False,
@@ -101,7 +103,3 @@ class generate_certificate(models.TransientModel):
 
     def on_cancel(self, cr, uid, ids, context):
         return {}
-
-generate_certificate()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
