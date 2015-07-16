@@ -27,3 +27,4 @@
 
 from . import key_pair
 from . import certificate
+from . import res_config

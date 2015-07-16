@@ -28,7 +28,7 @@
     'category': 'Tools',
     'version': '1.0',
     'depends': [
-        'base',
+        'base', 'base_setup'
     ],
     'external_dependencies': {
         'python': ['OpenSSL'],
@@ -37,6 +37,7 @@
         'views/key_pair_view.xml',
         'views/certificate_view.xml',
         'wizard/generate_certificate.xml',
+        'views/res_config.xml',
         'views/menu_view.xml'
     ],
     'qweb': [

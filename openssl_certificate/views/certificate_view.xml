@@ -24,10 +24,14 @@
 			<header>
 				<button name="%(action_openssl_generate_certificate_wizard)s" type="action" string="Generate certifate"/>
 				<button name="create_ca_cert" type="object" string="Crear CA"/>
+				<button name="create_certificate" type="object" string="Crear Certificado"/>
 				<field name="state" widget="statusbar" statusbar_colors='{}'/>
 			</header>
 			<sheet>
-				<field name="name"/>
+				<group>
+					<field name="name"/>
+					<field name="type"/>
+				</group>
 				<group>
 					<field name="partner_id"/>
 					<field name="keypair_id"/>
@@ -35,6 +39,8 @@
 				</group>
 				<separator string="Certificate"/>
 				<field name="crt"/>
+				<separator string="Export data PKCS12"/>
+				<field name="password"/>
 			</sheet>
 			</form>
 		</field>
