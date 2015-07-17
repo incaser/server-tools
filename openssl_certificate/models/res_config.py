@@ -12,14 +12,14 @@ class base_config_settings(TransientModel):
         icp = self.pool['ir.config_parameter']
         icp.set_param(
             cr, uid, 'openssl_certificate.root_id',
-            repr(config.openssl_certificate_root_id))
+            repr(config.openssl_certificate_root_id.id))
 
-    def get_openssl_certificate_root_id(
+    def get_default_openssl_certificate_root_id(
             self, cr, uid, ids, context=None):
         icp = self.pool['ir.config_parameter']
         return {
             'openssl_certificate_root_id': safe_eval(icp.get_param(
-                cr, uid, 'openssl_certificate.root_id', 'True')),
+                cr, uid, 'openssl_certificate.root_id', 'False')),
         }
 
 

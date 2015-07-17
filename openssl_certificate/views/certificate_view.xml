@@ -10,7 +10,7 @@
 			<tree string="Certificates">
 				<field name="partner_id"/>
 				<field name="name"/>
-				<field name="status"/>
+				<field name="state"/>
 			</tree>
 		</field>
 	</record>
@@ -24,7 +24,7 @@
 			<header>
 				<button name="%(action_openssl_generate_certificate_wizard)s" type="action" string="Generate certifate"/>
 				<button name="create_ca_cert" type="object" string="Crear CA"/>
-				<button name="create_certificate" type="object" string="Crear Certificado"/>
+				<button name="generate_certificate" type="object" string="Crear Certificado"/>
 				<field name="state" widget="statusbar" statusbar_colors='{}'/>
 			</header>
 			<sheet>
@@ -35,7 +35,7 @@
 				<group>
 					<field name="partner_id"/>
 					<field name="keypair_id"/>
-					<field name="status"/>
+					<!--<field name="status"/>-->
 				</group>
 				<separator string="Certificate"/>
 				<field name="crt"/>

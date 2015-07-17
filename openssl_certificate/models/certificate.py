@@ -25,11 +25,15 @@
 ##############################################################################
 
 from OpenSSL import crypto
+import base64
 import hashlib
 import string
 from random import choice
 
 from openerp import models, fields, api
+from openerp.exceptions import Warning
+from openerp.tools.translate import _
+
 
 class Certificate(models.Model):
     _name = 'openssl.certificate'
@@ -49,7 +53,6 @@ class Certificate(models.Model):
                        states={'draft': [('readonly', False)]},
                        help='Certificate Request in PEM format.')
     crt = fields.Text('Certificate',
-                       readonly=True,
                        states={'draft': [('readonly', False)],
                                'waiting': [('readonly', False)]},
                        help='Certificate in PEM format.')
@@ -61,10 +64,10 @@ class Certificate(models.Model):
         ('waiting', 'Waiting'),
         ('confirmed', 'Confirmed'),
         ('cancel', 'Cancelled')
-    ], 'State', readonly=True)
+    ], 'State', readonly=True, default='draft')
     password = fields.Char()
-    status = fields.Char(
-        compute='_get_status', string='Status', help='Certificate Status')
+    # status = fields.Char(
+    #     compute='_get_status', string='Status', help='Certificate Status')
 
     def get_serial(self):
         #Serial Generation - Serial number must be unique for each certificate,
@@ -74,18 +77,42 @@ class Certificate(models.Model):
         return serial
 
     def get_attach_binary(self, cert):
-        return self.env['ir.attachment'].search(
-            [('model','=','openssl.certificate'),('id','=', cert.id)])[0].db_datas
+        attach_obj = self.env['ir.attachment']
+        attach = attach_obj.search(
+            [('res_model', '=', 'openssl.certificate'),
+             ('res_id', '=', cert.id)])
+        return attach and attach[0].datas or False
+
+    @api.model
+    def get_default_ca_cert(self):
+        param_obj = self.env['ir.config_parameter']
+        ca_cert_id = param_obj.get_param('openssl_certificate.root_id', False)
+        return self.env['openssl.certificate'].browse(eval(ca_cert_id))
 
     @api.multi
-    def create_certificate(self, partner, ca_cert):
+    def generate_certificate(self):
         # ca_crt ='/home/sergio/desarrollo/CRTDatabase/Certificados Comcas/Comcas_CA_Root.crt'
         # ca_key ='/home/sergio/desarrollo/CRTDatabase/Certificados Comcas/Comcas_CA_Root.pem'
 
+        ca_cert_reg = self.get_default_ca_cert()
+        # ca_pem = self.get_attach_binary(ca_cert)
 
-        ca_pem = self.get_attach(ca_cert)
-        ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, ca_pem)
-        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, ca_pem)
+        if not ca_cert_reg:
+            # Warning message no Common Authority selected
+            raise Warning(_('Certificate Error'),
+                             _('Have not CA Root certificate selected, '
+                               'contact with administrator'))
+
+        # ca_pem_str = base64.decodestring(ca_pem)
+
+        # string_key = cStringIO.StringIO()
+        # string_key.write(ca_pem)
+        ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, ca_cert_reg.crt)
+        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, ca_cert_reg.keypair_id.private_key)
+        # string_key.close()
+
+
+
 
         # The CA stuff is loaded from the same folder as this script
         # ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, open(ca_pem).read())
@@ -106,48 +133,45 @@ class Certificate(models.Model):
 
 
         cert = crypto.X509()
-        cert.get_subject().C = self.partner_id.country_id.code
-        cert.get_subject().ST = self.partner_id.state_id.name
-        cert.get_subject().L = self.partner_id.city
+        cert.get_subject().C = self.partner_id.country_id.code or ''
+        cert.get_subject().ST = self.partner_id.state_id.name or ''
+        cert.get_subject().L = self.partner_id.city or ''
         cert.get_subject().O = self.partner_id.company_id.name
         cert.get_subject().OU = "website"
         cert.get_subject().CN = self.partner_id.name
-        cert.get_subject().emailAddress = self.partner_id.email
+        cert.get_subject().emailAddress = self.partner_id.email or ''
         cert.gmtime_adj_notBefore(0)
         cert.gmtime_adj_notAfter(365*24*60*60)
         cert.add_extensions([
-          crypto.X509Extension("basicConstraints", True, "CA:FALSE"),
-          crypto.X509Extension("keyUsage", True, "digitalSignature, keyEncipherment, dataEncipherment"),
-          crypto.X509Extension("subjectKeyIdentifier", False, "hash", subject=cert),
-          crypto.X509Extension("authorityKeyIdentifier", False, "keyid:always", subject=ca_cert, issuer=ca_cert),
-          crypto.X509Extension("extendedKeyUsage", False, "clientAuth"),
-          crypto.X509Extension("nsCertType", False, "client, email"),
-          crypto.X509Extension("nsComment", False, "xca certificate"),
+          crypto.X509Extension(
+              "basicConstraints", True,
+              "CA:FALSE"),
+          crypto.X509Extension(
+              "keyUsage", True,
+              "digitalSignature, keyEncipherment, dataEncipherment"),
+          crypto.X509Extension(
+              "subjectKeyIdentifier", False,
+              "hash", subject=cert),
+          crypto.X509Extension(
+              "authorityKeyIdentifier", False,
+              "keyid:always,issuer:always", subject=ca_cert, issuer=ca_cert),
+          crypto.X509Extension(
+              "extendedKeyUsage", False,
+              "clientAuth"),
+          crypto.X509Extension(
+              "nsCertType", False,
+              "client, email"),
+          crypto.X509Extension(
+              "nsComment", False,
+              "xca certificate"),
           ])
-
         cert.set_serial_number(self.get_serial())
         cert.set_version(2)
         cert.set_issuer(ca_cert.get_subject())
         cert.set_pubkey(pkey)
         cert.sign(ca_key, "sha256")
 
-        # The key and cert files are dumped and their paths are returned
-        # key_path = os.path.join(os.path.dirname(__file__),"domains/"+domain.replace('.','_')+".key")
-        # domain_key = open(key_path,"w")
-        # domain_key.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key))
-        #
-        # cert_path = os.path.join(os.path.dirname(__file__),"domains/"+domain.replace('.','_')+".crt")
-        # domain_cert = open(cert_path,"w")
-        # domain_cert.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-
-        self.crt = self.cert_to_PKCS12(cert, pkey)
-
-        # image = base64.encodestring(fn.read())
-
-        # string_key = cStringIO.StringIO()
-        # string_key.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-        # self.crt = string_key.getvalue()
-        # string_key.close()
+        self.crt = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
         return cert
 
     def cert_to_PKCS12(self, cert, pkey):
@@ -174,3 +198,27 @@ class Certificate(models.Model):
         Para usar tambien numeros, string.digits
         """
         return ''.join([choice(string.letters + string.digits) for i in range(n)])
+
+    @api.model
+    def mass_create_certificate(self, partners=None):
+        if not partners:
+            partner_ids = self._context.get('active_ids', False)
+            partners = self.env['res.partner'].browse(partner_ids)
+        cert_ids = []
+        for partner in partners:
+            vals = {'name': partner.name,
+                    'partner_id': partner.id}
+            new_cert = self.create(vals)
+            cert_ids.append(new_cert.id)
+            new_cert.generate_certificate()
+
+        action = {
+            'name': 'Certificates',
+            'type': 'ir.actions.act_window',
+            'res_model': 'openssl.certificate',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'domain': [('id', 'in', cert_ids)],
+            'context': self._context,
+        }
+        return action

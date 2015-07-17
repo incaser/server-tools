@@ -36,6 +36,7 @@
     'data': [
         'views/key_pair_view.xml',
         'views/certificate_view.xml',
+        'views/res_partner_view.xml',
         'wizard/generate_certificate.xml',
         'views/res_config.xml',
         'views/menu_view.xml'
