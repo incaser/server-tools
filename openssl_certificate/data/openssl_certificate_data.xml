@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="openssl_certificate_template" model="email.template">
+            <field name="name">X509 Certificate</field>
+            <field name="subject">Portal Access Certificate</field>
+            <field name="model_id" ref="model_openssl_certificate"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">${object.partner_id.company_id.email}</field>
+            <field name="email_to">${object.email|safe}</field>
+            <field name="partner_to">${object.partner_id and object.partner_id.id or ''}</field>
+            <field name="reply_to">${object.partner_id.company_id.email}</field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px; margin:0px">
+<table cellpadding="0" cellspacing="0" style="margin:10px 0px 0px;vertical-align:top;padding:0px 5px;font-family:arial;font-size:12px;color:rgb(51,51,51)">
+	<tbody>
+		<tr>
+			<td style="width:600px" valign="top">
+			<h2 style="text-align: center">Certificado de acceso al portal</h2>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:600px" valign="top">
+			<div style="padding:0px 5px">
+			<p style="overflow:hidden">Acaba de recibir el certificado electr&#243;nico de acceso al portal del colegiado.</p>
+
+			<p style="overflow:hidden">Debe de importarlos en su navegador de internet.</p>
+			</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+
+]]></field>
+        </record>
+
+    </data>
+</openerp>

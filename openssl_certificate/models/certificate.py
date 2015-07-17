@@ -224,6 +224,7 @@ class Certificate(models.Model):
     def send_email(self):
         template_id = self.get_default_mail_template()
         mail_obj = self.env['mail.mail']
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
         mails_rendered = template_id.generate_email_batch(
             template_id.id, self.ids)
 

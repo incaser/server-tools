@@ -22,7 +22,6 @@
 		<field name="arch" type="xml">
 			<form string="Certificate">
 			<header>
-				<button name="%(action_openssl_generate_certificate_wizard)s" type="action" string="Generate certifate"/>
 				<button name="create_ca_cert" type="object" string="Crear CA"/>
 				<button name="generate_certificate" type="object" string="Generate Certificate"/>
 				<button name="send_email" type="object" string="Send By Email"/>

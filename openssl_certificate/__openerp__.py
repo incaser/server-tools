@@ -28,7 +28,7 @@
     'category': 'Tools',
     'version': '1.0',
     'depends': [
-        'base', 'base_setup'
+        'base', 'base_setup','email_template'
     ],
     'external_dependencies': {
         'python': ['OpenSSL'],
@@ -39,7 +39,9 @@
         'views/res_partner_view.xml',
         'wizard/generate_certificate.xml',
         'views/res_config.xml',
+        'data/openssl_certificate_data.xml',
         'views/menu_view.xml'
+
     ],
     'qweb': [
     ],
