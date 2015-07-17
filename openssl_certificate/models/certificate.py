@@ -76,13 +76,6 @@ class Certificate(models.Model):
         serial = int(md5_hash.hexdigest(), 36)
         return serial
 
-    def get_attach_binary(self, cert):
-        attach_obj = self.env['ir.attachment']
-        attach = attach_obj.search(
-            [('res_model', '=', 'openssl.certificate'),
-             ('res_id', '=', cert.id)])
-        return attach and attach[0].datas or False
-
     @api.model
     def get_default_ca_cert(self):
         param_obj = self.env['ir.config_parameter']
@@ -91,55 +84,29 @@ class Certificate(models.Model):
 
     @api.multi
     def generate_certificate(self):
-        # ca_crt ='/home/sergio/desarrollo/CRTDatabase/Certificados Comcas/Comcas_CA_Root.crt'
-        # ca_key ='/home/sergio/desarrollo/CRTDatabase/Certificados Comcas/Comcas_CA_Root.pem'
-
         ca_cert_reg = self.get_default_ca_cert()
-        # ca_pem = self.get_attach_binary(ca_cert)
-
         if not ca_cert_reg:
-            # Warning message no Common Authority selected
             raise Warning(_('Certificate Error'),
                              _('Have not CA Root certificate selected, '
                                'contact with administrator'))
-
-        # ca_pem_str = base64.decodestring(ca_pem)
-
-        # string_key = cStringIO.StringIO()
-        # string_key.write(ca_pem)
-        ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, ca_cert_reg.crt)
-        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, ca_cert_reg.keypair_id.private_key)
-        # string_key.close()
-
-
-
-
-        # The CA stuff is loaded from the same folder as this script
-        # ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, open(ca_pem).read())
-        # The last parameter is the password for your CA key file
-        # ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, open(ca_pem).read())
-
-        # key = crypto.PKey()
-        # key.generate_key(crypto.TYPE_RSA, 4096)
-
+        ca_cert = crypto.load_certificate(
+            crypto.FILETYPE_PEM, ca_cert_reg.crt)
+        ca_key = crypto.load_privatekey(
+            crypto.FILETYPE_PEM, ca_cert_reg.keypair_id.private_key)
         pkey_obj = self.env['openssl.key.pair']
         vals = {'name': 'Cert_%s' % (self.name),
+                'partner_id': self.partner_id.id,
                 'type': crypto.TYPE_RSA,
                 'size': 4096
                 }
         pkey_record = pkey_obj.create(vals)
         pkey = pkey_record.generate_key()
         self.keypair_id = pkey_record
-
-
         cert = crypto.X509()
-        cert.get_subject().C = self.partner_id.country_id.code or ''
-        cert.get_subject().ST = self.partner_id.state_id.name or ''
-        cert.get_subject().L = self.partner_id.city or ''
-        cert.get_subject().O = self.partner_id.company_id.name
-        cert.get_subject().OU = "website"
-        cert.get_subject().CN = self.partner_id.name
-        cert.get_subject().emailAddress = self.partner_id.email or ''
+        subject_data = self.get_cert_subject_data()
+        for key in subject_data.keys():
+            obj = getattr(cert.get_subject(), key)
+            obj = subject_data[key]
         cert.gmtime_adj_notBefore(0)
         cert.gmtime_adj_notAfter(365*24*60*60)
         cert.add_extensions([
@@ -171,8 +138,24 @@ class Certificate(models.Model):
         cert.set_pubkey(pkey)
         cert.sign(ca_key, "sha256")
 
-        self.crt = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
+        vals = {'crt': crypto.dump_certificate(crypto.FILETYPE_PEM, cert),
+                'state': 'confirmed'}
+        self.write(vals)
+
+        self.cert_to_PKCS12(cert, pkey)
         return cert
+
+    def get_cert_subject_data(self):
+        data ={
+            'O': self.partner_id.country_id.code,
+            'ST': self.partner_id.state_id.name,
+            'L': self.partner_id.city,
+            'O': self.partner_id.company_id.name,
+            'OU': "website",
+            'CN': self.partner_id.name,
+            'emailAddress': self.partner_id.email}
+        return data
+
 
     def cert_to_PKCS12(self, cert, pkey):
         certPKCS12 = crypto.PKCS12()
@@ -183,13 +166,13 @@ class Certificate(models.Model):
 
         vals={
             'name': 'Cert-%s.p12' % (self.partner_id.name),
-            'datas_fname': 'Certi - 1',
+            'datas_fname': 'Cert-%s.p12' % (self.partner_id.name),
             'res_model': 'openssl.certificate',
             'res_id': self.id,
             'db_datas': pk_str,
             }
         self.env['ir.attachment'].create(vals)
-        return pk_str
+        return True
 
     def gen_passwd(self, n):
         """
@@ -200,10 +183,9 @@ class Certificate(models.Model):
         return ''.join([choice(string.letters + string.digits) for i in range(n)])
 
     @api.model
-    def mass_create_certificate(self, partners=None):
-        if not partners:
-            partner_ids = self._context.get('active_ids', False)
-            partners = self.env['res.partner'].browse(partner_ids)
+    def mass_create_certificate(self):
+        partner_ids = self._context.get('active_ids', False)
+        partners = self.env['res.partner'].browse(partner_ids)
         cert_ids = []
         for partner in partners:
             vals = {'name': partner.name,
@@ -222,3 +204,32 @@ class Certificate(models.Model):
             'context': self._context,
         }
         return action
+
+    def get_attach(self):
+        attach_obj = self.env['ir.attachment']
+        attach = attach_obj.search(
+            [('res_model', '=', 'openssl.certificate'),
+             ('res_id', '=', self.id)])
+        return attach
+
+    @api.model
+    def get_default_mail_template(self):
+        param_obj = self.env['ir.config_parameter']
+        template_id = param_obj.get_param(
+            'openssl_certificate.mail_template_id', False)
+        return self.env['email.template'].browse(eval(template_id))
+
+
+    @api.multi
+    def send_email(self):
+        template_id = self.get_default_mail_template()
+        mail_obj = self.env['mail.mail']
+        mails_rendered = template_id.generate_email_batch(
+            template_id.id, self.ids)
+
+        for cert in self:
+            vals = mails_rendered[cert.id]
+            attach = cert.get_attach()
+            if vals:
+                vals['attachment_ids'] = [(6, 0, [attach.id])]
+                mail_obj.create(vals)

@@ -25,6 +25,9 @@
                         <field name="private_key"/>
                         <field name="public_key"/>
                     </group>
+                    <group string="Certificates">
+                        <field name="cert_ids"/>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -40,6 +43,7 @@
                 <field name="type"/>
                 <field name="size"/>
                 <field name="partner_id"/>
+                <field name="cert_ids"/>
             </tree>
         </field>
     </record>

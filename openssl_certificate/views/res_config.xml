@@ -13,7 +13,12 @@
                         <div>
                             <div>
                                 <field name="openssl_certificate_root_id" class="oe_inline"/>
-                                <label for="openssl_certificate_root_id"/>
+                            </div>
+                        </div>
+                        <label for="id" string="Email Template For Certificate"/>
+                        <div>
+                            <div>
+                                <field name="openssl_certificate_mail_template_id" class="oe_inline"/>
                             </div>
                         </div>
                     </group>

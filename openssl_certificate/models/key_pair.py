@@ -61,6 +61,9 @@ class KeyPair(models.Model):
         ('confirmed', 'Confirmed'),
         ('cancel', 'Cancelled'),
     ], string='State', readonly=True, default='draft')
+    cert_ids = fields.One2many(
+        comodel_name='openssl.certificate', inverse_name='keypair_id',
+        string='Certificates')
 
     def create_key_pair(self, type, bits):
         """
