@@ -66,6 +66,10 @@ class Certificate(models.Model):
         ('cancel', 'Cancelled')
     ], 'State', readonly=True, default='draft')
     password = fields.Char()
+    status_email = fields.Selection(
+        [('to_send', 'To Send'),
+         ('send', 'Send'),
+         ('not_send', 'Not Send')], string='Email Send', default='to_send')
     # status = fields.Char(
     #     compute='_get_status', string='Status', help='Certificate Status')
 
@@ -225,12 +229,14 @@ class Certificate(models.Model):
         template_id = self.get_default_mail_template()
         mail_obj = self.env['mail.mail']
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        rec_email = self.filtered(lambda r: r.partner_id.email)
         mails_rendered = template_id.generate_email_batch(
-            template_id.id, self.ids)
+            template_id.id, rec_email.ids)
 
-        for cert in self:
+        for cert in rec_email:
             vals = mails_rendered[cert.id]
             attach = cert.get_attach()
             if vals:
                 vals['attachment_ids'] = [(6, 0, [attach.id])]
                 mail_obj.create(vals)
+        rec_email.write({'status_email': 'send'})

@@ -2,6 +2,32 @@
 <openerp>
 <data>
 
+	<!-- Certificate Search View  -->
+	<record id="view_openssl_certificate_search" model="ir.ui.view">
+		<field name="name">OpenSSL Certificate Search</field>
+		<field name="model">openssl.certificate</field>
+		<field name="arch" type="xml">
+			<search string="Search Certificates">
+				<field name="name" string="Certificate" filter_domain="[('name','ilike',self)]"/>
+				<field name="partner_id" string="Partner"/>
+				<!--<separator/>-->
+				<!--<field name="date" string="Date Greather than"-->
+					   <!--filter_domain="[('date','&gt;=',self)]"/>-->
+				<!--<field name="date" string="Date Less than"-->
+					   <!--filter_domain="[('date','&lt;=',self)]"/>-->
+				<separator/>
+				<filter domain="[('state','=','draft')]" help="Draft"/>
+				<filter domain="[('state','=','waiting')]" help="Waiting"/>
+				<filter domain="[('state','=','confirmed" help="Confirmed"/>
+				<filter domain="[('state','=','cancel')]" help="Cancel"/>
+				<!--<separator/>-->
+				<!--<filter domain="[('status_email','=','to_send')]" help="To Send"/>-->
+				<!--<filter domain="[('status_email','=','send')]" help="Send"/>-->
+
+			</search>
+		</field>
+	</record>
+
 	<record id="view_openssl_certificate_tree" model="ir.ui.view">
 		<field name="name">openssl.certificate.tree</field>
 		<field name="model">openssl.certificate</field>
@@ -10,6 +36,7 @@
 			<tree string="Certificates">
 				<field name="partner_id"/>
 				<field name="name"/>
+				<field name="status_email"/>
 				<field name="state"/>
 			</tree>
 		</field>
@@ -29,13 +56,15 @@
 			</header>
 			<sheet>
 				<group>
-					<field name="name"/>
-					<field name="type"/>
-				</group>
-				<group>
-					<field name="partner_id"/>
-					<field name="keypair_id"/>
-					<!--<field name="status"/>-->
+					<group>
+						<field name="name"/>
+						<field name="type"/>
+						<field name="partner_id"/>
+					</group>
+					<group>
+						<field name="keypair_id"/>
+						<field name="status_email"/>
+					</group>
 				</group>
 				<separator string="Certificate"/>
 				<field name="crt"/>
@@ -53,6 +82,25 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_openssl_certificate_tree"/>
 	</record>
+
+    <!-- SEND EMAILS FROM CERTIFICATE -->
+    <record id="openssl_certificate_send_email" model="ir.actions.server">
+        <field name="sequence" eval="5"/>
+        <field name="state">code</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="openssl_certificate.model_openssl_certificate"/>
+        <field name="code">action=self.send_email(cr, uid, context['active_ids'],context)
+        </field>
+        <field name="condition">True</field>
+        <field name="name">Send Email</field>
+    </record>
+
+    <record id="binding_openssl_certificate_send_email" model="ir.values">
+      <field name="name">Send Email</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' +str(ref('openssl_certificate_send_email'))" />
+      <field name="model">openssl.certificate</field>
+    </record>
 
     </data>
 </openerp>
