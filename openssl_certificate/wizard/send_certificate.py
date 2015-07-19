@@ -22,39 +22,16 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-##############################################################################
-{
-    'name': "SSL Certificate Genarator",
-    'category': 'Tools',
-    'version': '1.0',
-    'depends': [
-        'base', 'base_setup','email_template'
-    ],
-    'external_dependencies': {
-        'python': ['OpenSSL'],
-    },
-    'data': [
-        'views/key_pair_view.xml',
-        'views/certificate_view.xml',
-        'views/res_partner_view.xml',
-        'wizard/generate_certificate.xml',
-        'views/res_config.xml',
-        'wizard/send_certificate.xml',
-        'data/openssl_certificate_data.xml',
-        'views/menu_view.xml'
+#############################################################################
 
-    ],
-    'qweb': [
-    ],
-    'js': [
-    ],
-    'author': 'Incaser Informatica S.L., '
-              'Odoo Community Association (OCA)',
-    'website': 'http://www.incaser.es',
-    'license': 'AGPL-3',
-    'demo': [],
-    'test': [],
-    'installable': True,
-    # 'auto_install':False,
-    # 'application':False,
-}
+from openerp import models
+
+
+class generate_certificate(models.TransientModel):
+    _name = 'openssl.send_certificate'
+
+
+    def send_certificates(self):
+        cert_obj = self.env['openssl.certificate']
+        cert_obj.browse(self._context['active_ids'])
+        cert_obj.send_email()

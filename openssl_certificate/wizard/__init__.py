@@ -24,4 +24,5 @@
 #
 ###############################################################################
 
-import generate_certificate
+from . import generate_certificate
+from . import send_certificate

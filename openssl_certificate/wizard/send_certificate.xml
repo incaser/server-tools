@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+	<record id="openssl_send_certificate_form_wiz" model="ir.ui.view">
+	    <field name="name">openssl.send.certificate.form.wiz</field>
+	    <field name="model">openssl.send_certificate</field>
+	    <field name="type">form</field>
+	    <field name="arch" type="xml">
+		<form string="Send Certificate">
+            <group>
+                <div>
+                    <p>
+                        Send certificates by email
+                    </p>
+                </div>
+            </group>
+		    <footer col="2" colspan="4">
+			    <button string="Send" name="send_certificates" icon="gtk-ok" type="object"/>
+			    <button string="Cancel" special="cancel" icon="gtk-ok" />
+		    </footer>
+	      </form>
+	    </field>
+	</record>
+
+	<act_window id="action_openssl_send_certificate_wizard"
+		    name="Send Certificates"
+		    src_model="openssl.certificate"
+		    res_model="openssl.send_certificate"
+		    view_mode="form"
+		    view_type="form"
+		    target="new"
+            key2="client_action_multi"
+		    />
+	
+</data>
+</openerp>
