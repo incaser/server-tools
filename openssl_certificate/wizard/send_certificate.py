@@ -24,13 +24,13 @@
 #
 #############################################################################
 
-from openerp import models
+from openerp import models, api
 
 
-class generate_certificate(models.TransientModel):
+class SendCertificate(models.TransientModel):
     _name = 'openssl.send_certificate'
 
-
+    @api.multi
     def send_certificates(self):
         cert_obj = self.env['openssl.certificate']
         cert_obj.browse(self._context['active_ids'])

@@ -24,7 +24,7 @@
 	</record>
 
 	<act_window id="action_openssl_send_certificate_wizard"
-		    name="Send Certificates"
+		    name="Send Certificate"
 		    src_model="openssl.certificate"
 		    res_model="openssl.send_certificate"
 		    view_mode="form"
