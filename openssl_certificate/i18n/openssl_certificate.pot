@@ -1,0 +1,324 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* openssl_certificate
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-20 16:10+0000\n"
+"PO-Revision-Date: 2015-07-20 18:17+0100\n"
+"Last-Translator: Sergio Teruel <sergio@incaser.es>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: openssl_certificate
+#: model:email.template,body_html:openssl_certificate.openssl_certificate_template
+msgid ""
+"\n"
+"Prueba\n"
+msgstr ""
+
+#. module: openssl_certificate
+#: selection:openssl.key.pair,size:0
+msgid "1024"
+msgstr ""
+
+#. module: openssl_certificate
+#: selection:openssl.key.pair,size:0
+msgid "2048"
+msgstr ""
+
+#. module: openssl_certificate
+#: selection:openssl.key.pair,size:0
+msgid "4096"
+msgstr ""
+
+#. module: openssl_certificate
+#: field:base.config.settings,openssl_certificate_root_id:0
+msgid "CA Certificate"
+msgstr "Autoridad de certificación"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+#: view:openssl.send_certificate:openssl_certificate.openssl_send_certificate_form_wiz
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: openssl_certificate
+#: selection:openssl.certificate,state:0 selection:openssl.key.pair,state:0
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_form
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+#: field:openssl.certificate,crt:0
+msgid "Certificate"
+msgstr "Certificado"
+
+#. module: openssl_certificate
+#: code:addons/openssl_certificate/models/certificate.py:93
+#, python-format
+msgid "Certificate Error"
+msgstr "Error de certificado"
+
+#. module: openssl_certificate
+#: help:openssl.certificate,csr:0
+msgid "Certificate Request in PEM format."
+msgstr ""
+
+#. module: openssl_certificate
+#: view:base.config.settings:openssl_certificate.view_res_config_settings
+msgid "Certificate X509"
+msgstr "Certificado X509"
+
+#. module: openssl_certificate
+#: help:openssl.certificate,crt:0
+msgid "Certificate in PEM format."
+msgstr "Certificado en formato PEM"
+
+#. module: openssl_certificate
+#: model:ir.actions.act_window,name:openssl_certificate.action_openssl_certificate
+#: model:ir.ui.menu,name:openssl_certificate.menu_action_certificate_tree
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_tree
+#: view:openssl.key.pair:openssl_certificate.openssl_key_pair_form
+#: field:openssl.key.pair,cert_ids:0
+msgid "Certificates"
+msgstr "Certificados"
+
+#. module: openssl_certificate
+#: selection:openssl.certificate,type:0
+msgid "Common Authority"
+msgstr "Autoridad certificadora"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+#: selection:openssl.certificate,state:0 selection:openssl.key.pair,state:0
+msgid "Confirmed"
+msgstr "Confirmado"
+
+#. module: openssl_certificate
+#: model:ir.actions.server,name:openssl_certificate.openssl_create_certificates
+msgid "Create x509 Certificate"
+msgstr "Crear certificado X509"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,create_uid:0 field:openssl.key.pair,create_uid:0
+#: field:openssl.send_certificate,create_uid:0
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,create_date:0
+#: field:openssl.key.pair,create_date:0
+#: field:openssl.send_certificate,create_date:0
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: openssl_certificate
+#: selection:openssl.key.pair,type:0
+msgid "DSA"
+msgstr ""
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+#: selection:openssl.certificate,state:0 selection:openssl.key.pair,state:0
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,status_email:0
+msgid "Email Send"
+msgstr "Enviar correo"
+
+#. module: openssl_certificate
+#: view:base.config.settings:openssl_certificate.view_res_config_settings
+msgid "Email Template For Certificate"
+msgstr "Plantilla correo para enviar certificado"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_form
+msgid "Export data PKCS12"
+msgstr "Exportar en formato PKCS12"
+
+#. module: openssl_certificate
+#: model:ir.actions.server,name:openssl_certificate.openssl_certificate_generate
+msgid "Generate Certificate"
+msgstr "Generar certificado"
+
+#. module: openssl_certificate
+#: view:openssl.key.pair:openssl_certificate.openssl_key_pair_form
+msgid "Generate keys"
+msgstr "Generar claves"
+
+#. module: openssl_certificate
+#: code:addons/openssl_certificate/models/certificate.py:94
+#, python-format
+msgid "Have not CA Root certificate selected, contact with administrator"
+msgstr ""
+
+#. module: openssl_certificate
+#: field:openssl.certificate,id:0 field:openssl.key.pair,id:0
+#: field:openssl.send_certificate,id:0
+msgid "ID"
+msgstr "ID (identificación)"
+
+#. module: openssl_certificate
+#: view:openssl.key.pair:openssl_certificate.openssl_key_pair_form
+msgid "Key"
+msgstr "Clave"
+
+#. module: openssl_certificate
+#: view:openssl.key.pair:openssl_certificate.openssl_key_pair_form
+msgid "Keys Pair"
+msgstr "Pareja de claves"
+
+#. module: openssl_certificate
+#: model:ir.actions.act_window,name:openssl_certificate.action_openssl_key_pair
+#: model:ir.ui.menu,name:openssl_certificate.menu_action_key_pair
+#: view:openssl.key.pair:openssl_certificate.openssl_key_pair_tree
+msgid "Keys pair"
+msgstr "Pareja de claves"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,write_uid:0 field:openssl.key.pair,write_uid:0
+#: field:openssl.send_certificate,write_uid:0
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,write_date:0 field:openssl.key.pair,write_date:0
+#: field:openssl.send_certificate,write_date:0
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: openssl_certificate
+#: field:base.config.settings,openssl_certificate_mail_template_id:0
+msgid "Mail Template"
+msgstr "Plantilla correo"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,name:0 field:openssl.key.pair,name:0
+msgid "Name"
+msgstr "Nombre"
+
+#. module: openssl_certificate
+#: selection:openssl.certificate,status_email:0
+msgid "Not Send"
+msgstr "No enviar"
+
+#. module: openssl_certificate
+#: model:ir.ui.menu,name:openssl_certificate.openssl_certificate_menu
+msgid "OpenSSL Certificates"
+msgstr "Certificados OpenSSL"
+
+#. module: openssl_certificate
+#: help:openssl.key.pair,partner_id:0
+msgid "Owner of the key. The only who can view, import and export the key."
+msgstr ""
+
+#. module: openssl_certificate
+#: field:openssl.certificate,keypair_id:0
+msgid "Pair Key"
+msgstr "Pareja claves"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+#: field:openssl.certificate,partner_id:0 field:openssl.key.pair,partner_id:0
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,password:0
+msgid "Password"
+msgstr "Contraseña"
+
+#. module: openssl_certificate
+#: model:email.template,subject:openssl_certificate.openssl_certificate_template
+msgid "Portal Access Certificate"
+msgstr "Administración de acceso al portal"
+
+#. module: openssl_certificate
+#: field:openssl.key.pair,private_key:0
+msgid "Private key"
+msgstr "Clave privada"
+
+#. module: openssl_certificate
+#: field:openssl.key.pair,public_key:0
+msgid "Public key"
+msgstr "Clave pública"
+
+#. module: openssl_certificate
+#: selection:openssl.key.pair,type:0
+msgid "RSA"
+msgstr ""
+
+#. module: openssl_certificate
+#: code:addons/openssl_certificate/wizard/generate_certificate.py:95
+#: field:openssl.certificate,csr:0
+#, python-format
+msgid "Request Certificate"
+msgstr "Solicitud certificado"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+msgid "Search Certificates"
+msgstr "Buscar certificados"
+
+#. module: openssl_certificate
+#: selection:openssl.certificate,status_email:0
+#: view:openssl.send_certificate:openssl_certificate.openssl_send_certificate_form_wiz
+msgid "Send"
+msgstr "Enviar"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_form
+msgid "Send By Email"
+msgstr "Send By Email"
+
+#. module: openssl_certificate
+#: model:ir.actions.act_window,name:openssl_certificate.action_openssl_send_certificate_wizard
+#: view:openssl.send_certificate:openssl_certificate.openssl_send_certificate_form_wiz
+msgid "Send Certificate"
+msgstr "Enviar certificado"
+
+#. module: openssl_certificate
+#: view:openssl.send_certificate:openssl_certificate.openssl_send_certificate_form_wiz
+msgid "Send certificates by email"
+msgstr "Enviar certificados por email"
+
+#. module: openssl_certificate
+#: field:openssl.key.pair,size:0
+msgid "Size"
+msgstr "Tamaño"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,state:0 field:openssl.key.pair,state:0
+msgid "State"
+msgstr "Estado"
+
+#. module: openssl_certificate
+#: selection:openssl.certificate,status_email:0
+msgid "To Send"
+msgstr "Para enviar"
+
+#. module: openssl_certificate
+#: field:openssl.certificate,type:0 field:openssl.key.pair,type:0
+msgid "Type"
+msgstr "Tipo"
+
+#. module: openssl_certificate
+#: view:openssl.certificate:openssl_certificate.view_openssl_certificate_search
+#: selection:openssl.certificate,state:0
+msgid "Waiting"
+msgstr "En espera"
+
+#. module: openssl_certificate
+#: selection:openssl.certificate,type:0
+msgid "entity"
+msgstr "Entidad"
