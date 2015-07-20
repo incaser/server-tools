@@ -86,7 +86,7 @@ class Certificate(models.Model):
         ca_cert_id = param_obj.get_param('openssl_certificate.root_id', False)
         return self.env['openssl.certificate'].browse(eval(ca_cert_id))
 
-    @api.multi
+    @api.one
     def generate_certificate(self):
         ca_cert_reg = self.get_default_ca_cert()
         if not ca_cert_reg:
@@ -101,7 +101,7 @@ class Certificate(models.Model):
         vals = {'name': 'Cert_%s' % (self.name),
                 'partner_id': self.partner_id.id,
                 'type': crypto.TYPE_RSA,
-                'size': 4096
+                'size': 2048
                 }
         pkey_record = pkey_obj.create(vals)
         pkey = pkey_record.generate_key()
@@ -109,8 +109,7 @@ class Certificate(models.Model):
         cert = crypto.X509()
         subject_data = self.get_cert_subject_data()
         for key in subject_data.keys():
-            obj = getattr(cert.get_subject(), key)
-            obj = subject_data[key]
+            setattr(cert.get_subject(), key, subject_data[key])
         cert.gmtime_adj_notBefore(0)
         cert.gmtime_adj_notAfter(365*24*60*60)
         cert.add_extensions([
@@ -147,7 +146,7 @@ class Certificate(models.Model):
         self.write(vals)
 
         self.cert_to_PKCS12(cert, pkey)
-        return cert
+        return True
 
     def get_cert_subject_data(self):
         data ={

@@ -88,7 +88,7 @@
         <field name="state">code</field>
         <field name="type">ir.actions.server</field>
         <field name="model_id" ref="openssl_certificate.model_openssl_certificate"/>
-        <field name="code">action=self.generate_certificate(cr, uid, context['active_ids'],context)
+        <field name="code">self.generate_certificate(cr, uid, context['active_ids'],context)
         </field>
         <field name="condition">True</field>
         <field name="name">Generate Certificate</field>
