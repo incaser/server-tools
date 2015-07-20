@@ -262,6 +262,6 @@ class Certificate(models.Model):
             attach = cert.get_attach()
             if vals:
                 vals['attachment_ids'] = [(6, 0, [attach.id])]
-                vals['partner_ids'] = [(6, 0, vals['partner_ids'])]
+                # vals['partner_ids'] = [(6, 0, vals['partner_ids'])]
                 mail_obj.create(vals)
         return rec_email.write({'status_email': 'send'})
