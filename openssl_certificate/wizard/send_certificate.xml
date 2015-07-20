@@ -9,7 +9,7 @@
 	    <field name="arch" type="xml">
 		<form string="Send Certificate">
             <group>
-                <div>
+                <div id="send">
                     <p>
                         Send certificates by email
                     </p>

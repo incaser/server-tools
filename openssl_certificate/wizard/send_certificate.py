@@ -30,8 +30,8 @@ from openerp import models, api
 class SendCertificate(models.TransientModel):
     _name = 'openssl.send_certificate'
 
-    @api.multi
+    @api.one
     def send_certificates(self):
         cert_obj = self.env['openssl.certificate']
-        cert_obj.browse(self._context['active_ids'])
-        cert_obj.send_email()
+        certificates = cert_obj.browse(self._context['active_ids'])
+        certificates.send_email()

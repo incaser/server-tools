@@ -209,6 +209,31 @@ class Certificate(models.Model):
         }
         return action
 
+    @api.model
+    def mass_create_send_certificate(self):
+        partner_ids = self._context.get('active_ids', False)
+        partners = self.env['res.partner'].browse(partner_ids)
+        cert_ids = []
+        for partner in partners:
+            vals = {'name': partner.name,
+                    'partner_id': partner.id}
+            new_cert = self.create(vals)
+            cert_ids.append(new_cert.id)
+            new_cert.generate_certificate()
+
+        ctx = self._context.copy()
+        ctx['active_ids'] = cert_ids
+        action = {
+            'name': 'Send Certificates',
+            'type': 'ir.actions.act_window',
+            'res_model': 'openssl.send_certificate',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': ctx,
+        }
+        return action
+
     def get_attach(self):
         attach_obj = self.env['ir.attachment']
         attach = attach_obj.search(
@@ -238,5 +263,6 @@ class Certificate(models.Model):
             attach = cert.get_attach()
             if vals:
                 vals['attachment_ids'] = [(6, 0, [attach.id])]
+                vals['partner_ids'] = [(6, 0, vals['partner_ids'])]
                 mail_obj.create(vals)
-        rec_email.write({'status_email': 'send'})
+        return rec_email.write({'status_email': 'send'})
