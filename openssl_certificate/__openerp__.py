@@ -41,6 +41,8 @@
         'views/res_config.xml',
         'wizard/send_certificate.xml',
         'data/openssl_certificate_data.xml',
+        'security/openssl_certificate_security.xml',
+        'security/ir.model.access.csv',
         'views/menu_view.xml'
 
     ],
